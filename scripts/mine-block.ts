@@ -1,24 +1,24 @@
 import { keccak256, arrayify, concat } from "ethers/lib/utils";
-import { mempool, Tx } from "./mempool";
+import { mempool, Transaction } from "./mempool";
 
 interface Block {
   index: number;
   previousHash: string;
   merkleRoot: string;
   timestamp: number;
-  transactions: Tx[];
+  transactions: Transaction[];
   nonce: number;
 }
 
 export const blockchain: Block[] = [];
 
 // Hash a transaction
-function hashTx(tx: Tx) {
+function hashTx(tx: Transaction) {
   return keccak256(new TextEncoder().encode(tx.from + tx.to + tx.value));
 }
 
 // Compute Merkle Root
-function computeMerkleRoot(txs: Tx[]) {
+function computeMerkleRoot(txs: Transaction[]) {
   let hashes = txs.map(hashTx);
   if (hashes.length === 0) return keccak256(new TextEncoder().encode("0x0"));
   

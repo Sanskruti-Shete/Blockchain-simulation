@@ -1,41 +1,44 @@
-import { ethers } from "hardhat";
-import { addTx, showMempool } from "./mempool";
-import { createBlock, mineBlock, blockchain } from "./mine-block";
+import { ethers } from "ethers";
+import { addTransaction, getMempool, clearMempool } from "./mempool";
+import { mineBlock, getBlockchain } from "./mining";
 
 async function main() {
-  const [user1, user2] = await ethers.getSigners();
+  const provider = new ethers.providers.JsonRpcProvider("http://127.0.0.1:8545");
+  const accounts = await provider.listAccounts();
 
-  // --- 1️⃣ Add transactions ---
-  const msg1 = ethers.utils.id("Invest 1 ETH");
-  const sig1 = await user1.signMessage(ethers.utils.arrayify(msg1));
-  addTx({
-    from: user1.address,
+  console.log("Simulating transactions...\n");
+
+  // Add two transactions
+  const tx1 = {
+    from: accounts[0],
     to: "CrowdfundingContractAddress",
     value: "1",
-    signature: sig1,
-  });
-
-  const msg2 = ethers.utils.id("Invest 2 ETH");
-  const sig2 = await user2.signMessage(ethers.utils.arrayify(msg2));
-  addTx({
-    from: user2.address,
+    signature: ethers.utils.hexlify(ethers.utils.randomBytes(65)),
+  };
+  const tx2 = {
+    from: accounts[1],
     to: "CrowdfundingContractAddress",
     value: "2",
-    signature: sig2,
-  });
+    signature: ethers.utils.hexlify(ethers.utils.randomBytes(65)),
+  };
 
-  // --- 2️⃣ Show current mempool ---
+  addTransaction(tx1);
+  addTransaction(tx2);
+
   console.log("\n=== CURRENT MEMPOOL ===");
-  showMempool();
+  console.log(getMempool());
 
-  // --- 3️⃣ Mine a new block ---
   console.log("\n=== MINING BLOCK ===");
-  const block = createBlock();
-  mineBlock(block);
+  const newBlock = mineBlock();
 
-  // --- 4️⃣ Show entire blockchain ---
-  console.log("\n=== BLOCKCHAIN STATE ===");
-  console.log(blockchain);
+  console.log("\n✅ Block successfully mined!");
+  console.log("Block Hash:", newBlock.hash);
+  console.log("Previous Hash:", newBlock.previousHash);
+  console.log("Merkle Root:", newBlock.merkleRoot);
+  console.log("Transactions:", newBlock.transactions);
 }
 
-main().catch(console.error);
+main().catch((err) => {
+  console.error(err);
+  process.exitCode = 1;
+});
