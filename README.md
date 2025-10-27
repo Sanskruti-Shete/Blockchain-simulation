@@ -1,13 +1,9 @@
-# Sample Hardhat Project
+# 🧱 Blockchain Simulation Project (Hardhat + TypeScript + Express)
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
-```
+A complete local blockchain simulation demonstrating:
+- Transaction creation, signing, and verification (ECDSA)
+- Mempool management
+- Block mining (with Merkle tree hash)
+- Simple Proof-of-Work simulation
+- Backend API for visualization
+- Frontend block explorer
